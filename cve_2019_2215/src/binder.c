@@ -11,8 +11,6 @@
 #include "../include/binder.h"
 #include "../include/log.h"
 
-// open binder
-
 int open_binder(const char *device) {
   int fd = open(device, O_RDONLY);
   if (fd < 0) {
@@ -23,8 +21,6 @@ int open_binder(const char *device) {
   binder_version(fd);
   return fd;
 }
-
-// get binder version
 
 void binder_version(int binder_fd) {
   struct binder_version vers;
@@ -37,11 +33,7 @@ void binder_version(int binder_fd) {
   }
 }
 
-// close binder
-
 void close_binder(int binder_fd) { close(binder_fd); }
-
-// binder thread exit
 
 void binder_thread_exit(int binder_fd) {
   int res = ioctl(binder_fd, BINDER_THREAD_EXIT, NULL);
