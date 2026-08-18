@@ -5,12 +5,12 @@
 
 #define BINDER_THREAD_EXIT 0x40046208ul
 
-int main(){
-	int fd, epfd;
-	struct epoll_event event = { .events = EPOLLIN };
+int main() {
+  int fd, epfd;
+  struct epoll_event event = {.events = EPOLLIN};
 
-	fd = open("/dev/binder", O_RDONLY);
-	epfd = epoll_create(1000);
-	epoll_ctl(epfd, EPOLL_CTL_ADD, fd, &event);
-	ioctl(fd, BINDER_THREAD_EXIT, NULL);
+  fd = open("/dev/binder", O_RDONLY);
+  epfd = epoll_create(1000);
+  epoll_ctl(epfd, EPOLL_CTL_ADD, fd, &event);
+  ioctl(fd, BINDER_THREAD_EXIT, NULL);
 }

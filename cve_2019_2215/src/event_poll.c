@@ -7,8 +7,6 @@
 #include <string.h>
 #include <sys/epoll.h>
 
-// epoll create
-
 int event_pool_create() {
   int epfd = epoll_create(1000);
   if (epfd < 0) {
@@ -19,8 +17,6 @@ int event_pool_create() {
   return epfd;
 }
 
-// epoll add
-
 void event_pool_add(int epfd, int binder_fd, struct epoll_event *event) {
   int res = epoll_ctl(epfd, EPOLL_CTL_ADD, binder_fd, event);
   if (res < 0) {
@@ -29,8 +25,6 @@ void event_pool_add(int epfd, int binder_fd, struct epoll_event *event) {
   }
   SUCCESS("EPOLL_CTL_ADD");
 }
-
-// epoll delete
 
 void event_pool_remove(int epfd, int binder_fd, struct epoll_event *event) {
   int res = epoll_ctl(epfd, EPOLL_CTL_DEL, binder_fd, event);

