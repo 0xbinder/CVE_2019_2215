@@ -10,8 +10,24 @@
 #define CAP_EMPTY_SET (uint64_t)0
 #define CAP_FULL_SET (uint64_t)0x3FFFFFFFFF
 
-#define SYMBOL_OFFSET_init_nsproxy (ptrdiff_t)0x1233ac0
-#define SYMBOL_OFFSET_selinux_enforcing (ptrdiff_t)0x14acfe8
+#define SYMBOL_OFFSET_init_nsproxy (ptrdiff_t)0x1433ac0
+#define SYMBOL_OFFSET_selinux_enforcing (ptrdiff_t)0x169fe58
+
+#define OFFSET_TASK_STRUCT_CRED (offsetof(struct task_struct, cred))
+#define OFFSET_CRED_UID (offsetof(struct cred, uid))
+#define OFFSET_CRED_GID (offsetof(struct cred, gid))
+#define OFFSET_CRED_SUID (offsetof(struct cred, suid))
+#define OFFSET_CRED_SGID (offsetof(struct cred, sgid))
+#define OFFSET_CRED_EUID (offsetof(struct cred, euid))
+#define OFFSET_CRED_EGID (offsetof(struct cred, egid))
+#define OFFSET_CRED_FSUID (offsetof(struct cred, fsuid))
+#define OFFSET_CRED_FSGID (offsetof(struct cred, fsgid))
+#define OFFSET_CRED_SECUREBITS (offsetof(struct cred, securebits))
+#define OFFSET_CRED_CAP_INHERITABLE (offsetof(struct cred, cap_inheritable))
+#define OFFSET_CRED_CAP_PERMITTED (offsetof(struct cred, cap_permitted))
+#define OFFSET_CRED_CAP_EFFECTIVE (offsetof(struct cred, cap_effective))
+#define OFFSET_CRED_CAP_BSET (offsetof(struct cred, cap_bset))
+#define OFFSET_CRED_CAP_AMBIENT (offsetof(struct cred, cap_ambient))
 
 struct binder_thread {
   uint8_t proc[8];                 /* 0x000  0x08 */

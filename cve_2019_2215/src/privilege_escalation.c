@@ -3,29 +3,9 @@
 #include "../include/log.h"
 #include "../include/privilege_escalation.h"
 
-#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <unistd.h>
-
-// Offsets and constants – these should be in a shared header; I'll put them
-// here for clarity.
-#define OFFSET_TASK_STRUCT_CRED (offsetof(struct task_struct, cred))
-#define OFFSET_CRED_UID (offsetof(struct cred, uid))
-#define OFFSET_CRED_GID (offsetof(struct cred, gid))
-#define OFFSET_CRED_SUID (offsetof(struct cred, suid))
-#define OFFSET_CRED_SGID (offsetof(struct cred, sgid))
-#define OFFSET_CRED_EUID (offsetof(struct cred, euid))
-#define OFFSET_CRED_EGID (offsetof(struct cred, egid))
-#define OFFSET_CRED_FSUID (offsetof(struct cred, fsuid))
-#define OFFSET_CRED_FSGID (offsetof(struct cred, fsgid))
-#define OFFSET_CRED_SECUREBITS (offsetof(struct cred, securebits))
-#define OFFSET_CRED_CAP_INHERITABLE (offsetof(struct cred, cap_inheritable))
-#define OFFSET_CRED_CAP_PERMITTED (offsetof(struct cred, cap_permitted))
-#define OFFSET_CRED_CAP_EFFECTIVE (offsetof(struct cred, cap_effective))
-#define OFFSET_CRED_CAP_BSET (offsetof(struct cred, cap_bset))
-#define OFFSET_CRED_CAP_AMBIENT (offsetof(struct cred, cap_ambient))
 
 void patch_cred(int pipefd[2], struct task_struct *task_struct,
                 void *cred_address) {
