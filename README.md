@@ -30,7 +30,7 @@ we will need to stack up `25 iovec` structures to reallocate the dangling chunk.
 
 ![alt text](images/image-2.png)
 
-As we can see from the above table, `iovecStack[10].iov_len` and `iovecStack[11].iov_base` will be clobbered.
+As we can see from the above image, `iovecStack[10].iov_len` and `iovecStack[11].iov_base` will be clobbered.
 
 ![alt text](images/image-3.png)
 
