@@ -2,6 +2,12 @@
 
 A rewritten Proof-of-Concept / Local Privilege Escalation (LPE) exploit targeting **CVE-2019-2215**, a Use-After-Free vulnerability in the Android Binder driver.
 
+I have provided the vulnerable kernel build in the `vulnerable_kernel_builds` folder. Create an android 10 emulator AOSP and run the kernel with it 
+
+```bash
+emulator -show-kernel -no-window -no-snapshot -wipe-data -avd research -kernel bzImage
+```
+
 ## Technical Details of the Bug
 
 For the techinical details of the bug you can learn that from this amazing blog https://projectzero.google/2019/11/bad-binder-android-in-wild-exploit.html
