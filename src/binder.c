@@ -11,15 +11,41 @@
 #include "../include/binder.h"
 #include "../include/log.h"
 
-int open_binder(const char *device) {
-  int fd = open(device, O_RDONLY);
-  if (fd < 0) {
-    ERROR("Failed to open binder: %s", strerror(errno));
-    exit(EXIT_FAILURE);
+binder_ctx *open_binder(const char *device) {
+  binder_ctx *ctx;
+
+  ctx = malloc(sizeof(*ctx));
+
+  if (!ctx) {
+    ERROR("Failed to allocate memory");
+    exit(1);
   }
-  SUCCESS("binder fd: 0x%x", fd);
-  binder_version(fd);
-  return fd;
+
+  ctx->fd = open(device, O_RDWR | O_CLOEXEC, 0);
+
+  if (ctx->fd < 0) {
+    ERROR("Failed to open binder");
+    free(ctx);
+    exit(1);
+  }
+
+  binder_version(ctx->fd);
+
+  ctx->mapsize = 2 * BINDER_MAPSIZE;
+  ctx->mapped =
+      mmap((void *)0x100000000ul, ctx->mapsize, PROT_READ | PROT_WRITE,
+           MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+
+  if (ctx->mapped == MAP_FAILED) {
+    ERROR("mmap failed");
+    close(ctx->fd);
+    free(ctx);
+    exit(1);
+  }
+
+  INFO("Memory mapped at %p", ctx->mapped);
+
+  return ctx;
 }
 
 void binder_version(int binder_fd) {
@@ -33,7 +59,13 @@ void binder_version(int binder_fd) {
   }
 }
 
-void close_binder(int binder_fd) { close(binder_fd); }
+void close_binder(binder_ctx *ctx) {
+  if (ctx != NULL) {
+    munmap(ctx->mapped, ctx->mapsize);
+    close(ctx->fd);
+    free(ctx);
+  }
+}
 
 void binder_thread_exit(int binder_fd) {
   int res = ioctl(binder_fd, BINDER_THREAD_EXIT, NULL);

