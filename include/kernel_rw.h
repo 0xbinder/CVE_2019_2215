@@ -8,8 +8,6 @@
 #include <stdint.h>
 
 void init_kernel_read_write_pipe(int pipefd[2]);
-void verify_arbitrary_read_write(int pipefd[2], struct task_struct *task_struct,
-                                 void *pid_address);
 
 bool kernel_read(void *addr, size_t len, void *ubuf, int pipefd[2]);
 bool kernel_write(void *addr, size_t len, void *ubuf, int pipefd[2]);

